@@ -15,7 +15,7 @@ namespace MySchool.Core.Models
 
         public int Credits { get; set; }
 
-        //public CourseGrade Grade { get; set; }
+       
 
         public ICollection<Enrollment> Enrollments { get; set; }
     }

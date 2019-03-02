@@ -22,7 +22,7 @@ namespace MySchool.Controllers
         // GET: Students
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Students.ToListAsync());
+            return View(await _context.Students.AsNoTracking().ToListAsync());
         }
 
         // GET: Students/Details/5
@@ -33,7 +33,7 @@ namespace MySchool.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Students
+            var student = await _context.Students.Include(a=>a.Enrollments).ThenInclude(e=>e.Course).AsNoTracking()
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
