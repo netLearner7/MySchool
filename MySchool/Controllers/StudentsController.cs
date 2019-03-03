@@ -32,12 +32,17 @@ namespace MySchool.Controllers
             //搜索参数
             ViewData["SearchStudents"] = SearchStudents;
 
+            //判断搜索学生是否为空如果不为空则表示进行搜索，所以将叶号定位到1
             if (SearchStudents != null)
             {
                 page = 1;
             }
             else
             {
+                //如果为空，则会出现没有搜索和搜索中翻页两种情况
+                //没有搜索的话两个参数都为空，不会影响到结果
+                //搜索中翻页的话则视图只能传递CurrentStudent参数所以赋值给SearchStudents，
+                //使其筛选出合适的数据供CreatePagng进行偏移量操作
                 SearchStudents = CurrentStudent;
             }
 
@@ -45,11 +50,16 @@ namespace MySchool.Controllers
 
             #region 搜索和排序功能
 
-
+            //先做筛选，否则会影响到排序和翻页（偏移量操作）
             if (!string.IsNullOrWhiteSpace(SearchStudents)) {
                 students = students.Where(a => a.RealName.Contains(SearchStudents));
+                //每次搜索时将搜索学生设置为当前学生
+                ViewData["CurrentStudent"] = SearchStudents;
             }
 
+
+            //在做排序，否则影响翻页。
+            //每次点击筛选或者翻页时因为传递sortOrder为空所以一直为default分支
             switch (sortOrder)
             {
                 case "name desc":
@@ -67,10 +77,13 @@ namespace MySchool.Controllers
             }
             #endregion
 
+            //设定每页的大小
             int PageSize = 3;
 
+            //读出筛选后的所有数据
             var entities= students.AsNoTracking();
-            //加awat
+
+            //这个类以继承list方式组成1个list+4个属性的数据结构，存放相关数据
             var dtos =await  PaginatedList<Student>.CreatePagng(entities, page ?? 1, PageSize);
 
             //var dtos = await students.ToListAsync();

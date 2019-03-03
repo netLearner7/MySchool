@@ -23,7 +23,7 @@ namespace MySchool.Common
         }
 
         /// <summary>
-        /// 当前在第一页
+        /// 当前在第哪页
         /// </summary>
         public int PageIndex { get; set; }
 
@@ -47,6 +47,8 @@ namespace MySchool.Common
         {
             var count = await source.CountAsync();
 
+            //偏移量计算
+            //第一页到第二页时 跳过（2-1）*3=3个数据，然后读取3条数据
             var item = await source.Skip((pageindex - 1) * pagesize).Take(pagesize).ToListAsync();
             var dtos = new PaginatedList<T>(item, count, pageindex, pagesize);
             return dtos;
