@@ -9,6 +9,17 @@
 <p>
     <a asp-action="Create">添加</a>
 </p>
+<form asp-action="Index" method="post">
+    <div class="form">
+        <p>
+            姓名：<input type="text" name="SearchStudents" value="@ViewData["SearchStudents"]" />
+               <input type="submit"  value="搜索" class="btn" />
+               <a asp-action="Index">重置</a>
+
+        </p>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>

@@ -21,13 +21,19 @@ namespace MySchool.Controllers
         }
 
         // GET: Students
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(string sortOrder,string SearchStudents)
         {
 
             ViewData["Name_Sort_Parm"] = string.IsNullOrEmpty(sortOrder) ? "name desc" : "";
             ViewData["Date_Sort_Parm"] = sortOrder == "date" ? "date desc" : "date";
-
             var students = from Student in _context.Students select Student;
+
+            ViewData["SearchStudents"] = SearchStudents;
+            if (!string.IsNullOrWhiteSpace(SearchStudents)) {
+                students = students.Where(a => a.RealName.Contains(SearchStudents));
+            }
+
+            
 
             switch (sortOrder)
             {
