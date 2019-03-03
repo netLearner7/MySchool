@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MySchool.Core.Models.Student>
+﻿@model MySchool.Common.PaginatedList<MySchool.Core.Models.Student>;
 
 @{
     ViewData["Title"] = "学生列表";
@@ -24,10 +24,10 @@
     <thead>
         <tr>
                 <th>
-                    <a asp-action="Index" asp-route-sortOrder="@ViewData["Name_Sort_Parm"]">@Html.DisplayNameFor(model => model.RealName)</a>  
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["Name_Sort_Parm"]">姓名</a>  
                 </th>
                 <th>
-                    <a asp-action="Index" asp-route-sortOrder="@ViewData["Date_Sort_Parm"]"> @Html.DisplayNameFor(model => model.EnrollmentDate)</a>                   
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["Date_Sort_Parm"]">入学时间</a>                   
                 </th>
             <th></th>
         </tr>
@@ -50,3 +50,12 @@
 }
     </tbody>
 </table>
+
+@{ 
+
+    var PrevDisable = !Model.PreviousPage ? "disabled" : "";
+    var NextDisable=!Model.NextPage ? "disabled" : "";
+}
+
+<a asp-action="Index" class="btn btn-default @PrevDisable"  asp-route-sortOrder="@ViewData["SearchStudents"]" asp-route-page="@(Model.PageIndex-1)" asp-route-CurrentStudent="@ViewData["CurrentStudent"]">上一页</a>
+<a asp-action="Index" class="btn btn-default @NextDisable"  asp-route-sortOrder="@ViewData["SearchStudents"]" asp-route-page="@(Model.PageIndex+1)" asp-route-CurrentStudent="@ViewData["CurrentStudent"]">下一页</a>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MySchool.Application.Dtos;
+using MySchool.Common;
 using MySchool.Core.Models;
 using MySchool.EntityFramework;
 
@@ -21,19 +22,33 @@ namespace MySchool.Controllers
         }
 
         // GET: Students
-        public async Task<IActionResult> Index(string sortOrder,string SearchStudents)
+        public async Task<IActionResult>  Index
+            (string sortOrder,string SearchStudents,int? page,string CurrentStudent)
         {
-
+            //姓名排序参数
             ViewData["Name_Sort_Parm"] = string.IsNullOrEmpty(sortOrder) ? "name desc" : "";
+            //时间排序参数
             ViewData["Date_Sort_Parm"] = sortOrder == "date" ? "date desc" : "date";
+            //搜索参数
+            ViewData["SearchStudents"] = SearchStudents;
+
+            if (SearchStudents != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                SearchStudents = CurrentStudent;
+            }
+
             var students = from Student in _context.Students select Student;
 
-            ViewData["SearchStudents"] = SearchStudents;
+            #region 搜索和排序功能
+
+
             if (!string.IsNullOrWhiteSpace(SearchStudents)) {
                 students = students.Where(a => a.RealName.Contains(SearchStudents));
             }
-
-            
 
             switch (sortOrder)
             {
@@ -50,7 +65,15 @@ namespace MySchool.Controllers
                     students = students.OrderBy(a => a.RealName);
                     break;
             }
-            var dtos = await students.ToListAsync();
+            #endregion
+
+            int PageSize = 3;
+
+            var entities= students.AsNoTracking();
+            //加awat
+            var dtos =await  PaginatedList<Student>.CreatePagng(entities, page ?? 1, PageSize);
+
+            //var dtos = await students.ToListAsync();
             //查询出学生表的所有信息
             return View(dtos);
         }
