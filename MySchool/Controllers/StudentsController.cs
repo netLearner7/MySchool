@@ -21,10 +21,32 @@ namespace MySchool.Controllers
         }
 
         // GET: Students
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
+
+            ViewData["Name_Sort_Parm"] = string.IsNullOrEmpty(sortOrder) ? "name desc" : "";
+            ViewData["Date_Sort_Parm"] = sortOrder == "date" ? "date desc" : "date";
+
+            var students = from Student in _context.Students select Student;
+
+            switch (sortOrder)
+            {
+                case "name desc":
+                    students=students.OrderByDescending(a => a.RealName);
+                    break;
+                case "date desc":
+                    students = students.OrderByDescending(a => a.EnrollmentDate);
+                    break;
+                case "date":
+                    students = students.OrderBy(a => a.EnrollmentDate);
+                    break;
+                default:
+                    students = students.OrderBy(a => a.RealName);
+                    break;
+            }
+            var dtos = await students.ToListAsync();
             //查询出学生表的所有信息
-            return View(await _context.Students.AsNoTracking().ToListAsync());
+            return View(dtos);
         }
 
         // GET: Students/Details/5
@@ -144,7 +166,7 @@ namespace MySchool.Controllers
                 }
 
             }
-
+            
           
             return View(student);
         }
