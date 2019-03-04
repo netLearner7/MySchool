@@ -1,25 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using MySchool.Application.ViewModels;
+using MySchool.EntityFramework;
+using MySchool.ViewModels;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace MySchool.Controllers
 {
     public class HomeController : Controller
     {
+     
+        private MySchoolDbContext _dbContext;
+
+        public HomeController(MySchoolDbContext dbContext) {
+            _dbContext = dbContext;
+        }
+
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult About()
+        public async Task<IActionResult> About()
         {
-            ViewData["Message"] = "Your application description page.";
+            ViewData["Message"] = "学生统计信息";
 
-            return View();
+            var dots = from entity in _dbContext.Students
+                       group entity by entity.EnrollmentDate into dateGroup
+                       select new EnrollmentDateGroup()
+                       {
+                           StudentCount = dateGroup.Count(),
+                           EnrollmentDate = dateGroup.Key
+                       };
+            var dtos = await dots.ToListAsync();
+            
+            return View(dtos);
         }
 
         public IActionResult Contact()

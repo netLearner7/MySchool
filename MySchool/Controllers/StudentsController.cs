@@ -23,16 +23,19 @@ namespace MySchool.Controllers
 
         // GET: Students
         public async Task<IActionResult>  Index
-            (string sortOrder,string SearchStudents,int? page,string CurrentStudent)
+            (string sortOrder,string SearchStudents,int? page,string CurrentStudent,string logo)
         {
             //姓名排序参数
-            ViewData["Name_Sort_Parm"] = string.IsNullOrEmpty(sortOrder) ? "name desc" : "";
+            ViewData["Name_Sort_Parm"] = string.IsNullOrEmpty(sortOrder) ? "name desc" : "";           
             //时间排序参数
             ViewData["Date_Sort_Parm"] = sortOrder == "date" ? "date desc" : "date";
             //搜索参数
             ViewData["SearchStudents"] = SearchStudents;
 
-            //判断搜索学生是否为空如果不为空则表示进行搜索，所以将叶号定位到1
+            
+
+
+            //判断搜索学生是否为空如果不为空则表示进行搜索，所以将页号定位到1
             if (SearchStudents != null)
             {
                 page = 1;
@@ -46,6 +49,7 @@ namespace MySchool.Controllers
                 SearchStudents = CurrentStudent;
             }
 
+            //读取出整张表
             var students = from Student in _context.Students select Student;
 
             #region 搜索和排序功能
@@ -59,22 +63,19 @@ namespace MySchool.Controllers
 
 
             //在做排序，否则影响翻页。
-            //每次点击筛选或者翻页时因为传递sortOrder为空所以一直为default分支
-            switch (sortOrder)
+            //排序分为排序，排序翻页，筛选排序翻页
+            //第一种sortOrder会将值传递回来则直接进行排序
+            //第2 3中不会传递sortOrder因为一次sortOrder到后台时都是会变化的取决于姓名排序参数和时间排序参数
+            //所以当第一次排序时，将排序方式用logo记录下来并传递到view，前台翻页时传递logo，根据logo完成原来的排序，此时sortOrder为null
+            if (sortOrder != null)
             {
-                case "name desc":
-                    students=students.OrderByDescending(a => a.RealName);
-                    break;
-                case "date desc":
-                    students = students.OrderByDescending(a => a.EnrollmentDate);
-                    break;
-                case "date":
-                    students = students.OrderBy(a => a.EnrollmentDate);
-                    break;
-                default:
-                    students = students.OrderBy(a => a.RealName);
-                    break;
+                students= Sort(sortOrder, students);
             }
+            else
+            {
+                students = Sort(logo, students);
+            }
+            
             #endregion
 
             //设定每页的大小
@@ -90,6 +91,31 @@ namespace MySchool.Controllers
             //查询出学生表的所有信息
             return View(dtos);
         }
+
+
+        public IQueryable<Student> Sort(string logo,IQueryable<Student> students) {
+            switch (logo)
+            {
+                case "name desc":
+                    ViewData["logo"] = "name desc";
+                    return students.OrderByDescending(a => a.RealName);
+                  
+                case "date desc":
+                    ViewData["logo"] = "date desc";
+                    return students.OrderByDescending(a => a.EnrollmentDate);
+                    
+                case "date":
+                    ViewData["logo"] = "date desc";
+                    return students.OrderBy(a => a.EnrollmentDate);
+                    
+                default:
+                    ViewData["logo"] = "name";
+                    return students.OrderBy(a => a.RealName);              
+            };
+
+        }
+
+
 
         // GET: Students/Details/5
         public async Task<IActionResult> Details(int? id)

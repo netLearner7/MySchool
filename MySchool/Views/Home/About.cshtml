@@ -1,7 +1,22 @@
-﻿@{
+﻿@using MySchool.ViewModels
+@model List<MySchool.ViewModels.EnrollmentDateGroup>
+
+@{
     ViewData["Title"] = "About";
 }
 <h2>@ViewData["Title"]</h2>
 <h3>@ViewData["Message"]</h3>
 
-<p>Use this area to provide additional information.</p>
+<h2>学生信息统计</h2>
+<table>
+    <tr>
+        <th>注册时间</th>
+        <th>学生人数</th>
+    </tr>
+    @foreach (var ss in Model) {
+    <tr>
+        <td>@Html.DisplayFor(a=>ss.EnrollmentDate)</td>
+        <td>@Html.DisplayFor(a => ss.StudentCount)</td>
+    </tr>
+    }
+</table>

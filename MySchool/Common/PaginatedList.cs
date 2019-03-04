@@ -42,6 +42,7 @@ namespace MySchool.Common
         /// </summary>
         public bool NextPage => PageIndex<TotalPages;
 
+        
         public static async Task<PaginatedList<T>> CreatePagng
             (IQueryable<T> source, int pageindex, int pagesize)
         {
