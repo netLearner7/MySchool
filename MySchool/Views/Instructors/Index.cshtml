@@ -1,0 +1,118 @@
+﻿@using System.Security.Cryptography
+@model MySchool.ViewModels.InstructorIndexData
+
+@{
+    ViewData["Title"] = "教师信息";
+}
+
+<h2>教师信息</h2>
+
+<p>
+    <a asp-action="Create">添加教师</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>姓名</th>
+            <th>入职时间</th>
+            <th>办公室</th>
+            <th>课程</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.instructors)
+        {
+            var logo = "";
+            if (item.Id == (int?)ViewData["InstructorId"])
+            {
+                logo = "success";
+            }
+            <tr class="@logo">
+                <td>
+                    @Html.DisplayFor(modelItem => item.RealName)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.HrieDate)
+                </td>
+
+                <td>
+                    @if (item.OfficeAssignment != null)
+                    {
+                        @item.OfficeAssignment.Location
+                    }
+                </td>
+
+                <td>
+                    @foreach (var ss in item.courseAssignments)
+                    {
+                        @ss.CourseId @: @ss.courses.Title <br />
+                    }
+                </td>
+
+                <td>
+                    <a asp-action="Index" asp-route-id="@item.Id">查询</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">编辑</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">详情</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">删除</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.courses!=null&& Model.courses.Count > 0 )
+{
+
+    <h3>老师的课程</h3>
+    <table class="table">
+
+        <tr>
+
+            <th>课程编号</th>
+            <th>课程名称</th>
+            <th>课程部门</th>
+            <th>操作</th>
+        </tr>
+
+        @foreach (var item in Model.courses)
+        {
+            var logo2 = "";
+            if (item.CourseId == (int?)ViewData["courseId"])
+            {
+                logo2 = "success";
+            }
+            <tr class="@logo2">
+
+                <td>@item.CourseId</td>
+                <td>@item.Title</td>
+                <td>@item.Department.name</td>
+                <td>@Html.ActionLink("查看", "Index", new { courseId = item.CourseId })</td>
+            </tr>
+         }     
+    </table>
+}
+
+@if (Model.enrollments != null)
+{
+    <h3>
+        该课程下的所有学生：
+    </h3>
+    <table class="table">
+
+        <tr>
+            <th>姓名</th>
+            <th>成绩</th>
+        </tr>
+
+        @foreach (var aa in Model.enrollments)
+        {
+            <tr>
+                <td>@aa.Student.RealName</td>
+                <td>@aa.Grade</td>
+            </tr>
+        }
+
+    </table>
+}

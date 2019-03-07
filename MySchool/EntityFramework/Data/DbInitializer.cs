@@ -9,21 +9,23 @@ namespace MySchool.EntityFramework.Data
 {
     public class DbInitializer
     {
-        public static void Initialize(MySchoolDbContext context)
-        {
-            context.Database.EnsureCreated();
 
-            // 检查是否有学生信息
-            if (context.Students.Any())
+            public static void Initialize(MySchoolDbContext context)
             {
-                return; //返回，不执行。
-            }
-               
+                //    codefirst的时候如果没有库，则取消掉这句注释建库
+                //    context.Database.EnsureCreated();
 
-            #region 添加种子学生信息
+                // 检查是否有学生信息
+                if (context.Students.Any())
+                {
+                    return; //返回，不执行。
+                }
 
-            var students = new[]
-            {
+
+                #region 添加种子学生信息
+
+                var students = new[]
+                {
                 new Student {RealName = "龙傲天", EnrollmentDate = DateTime.Parse("2005-09-01")},
                 new Student {RealName = "王尼玛", EnrollmentDate = DateTime.Parse("2002-09-01")},
                 new Student {RealName = "张全蛋", EnrollmentDate = DateTime.Parse("2003-09-01")},
@@ -33,250 +35,239 @@ namespace MySchool.EntityFramework.Data
                 new Student {RealName = "李逍遥", EnrollmentDate = DateTime.Parse("2003-09-01")},
                 new Student {RealName = "王小虎", EnrollmentDate = DateTime.Parse("2005-09-01")}
             };
-            foreach (var s in students)
-                context.Students.Add(s);
-            context.SaveChanges();
+                foreach (var s in students)
+                    context.Students.Add(s);
+                context.SaveChanges();
 
-            #endregion
+                #endregion
 
-            /*
-            
-            #region 添加种子老师信息
 
-            var instructors = new[]
-            {
+                #region 添加种子老师信息
+
+                var Instructor = new[]
+                {
                 new Instructor
                 {
                     RealName = "孔子",
-                    HireDate = DateTime.Parse("1995-03-11")
+                    HrieDate = DateTime.Parse("1995-03-11")
                 },
                 new Instructor
                 {
                     RealName = "墨子",
-                    HireDate = DateTime.Parse("2003-03-11")
+                    HrieDate = DateTime.Parse("2003-03-11")
                 },
                 new Instructor
                 {
                     RealName = "荀子",
-                    HireDate = DateTime.Parse("1990-03-11")
+                    HrieDate = DateTime.Parse("1990-03-11")
                 },
                 new Instructor
                 {
                     RealName = "鬼谷子",
-                    HireDate = DateTime.Parse("1985-03-11")
+                    HrieDate = DateTime.Parse("1985-03-11")
                 },
                 new Instructor
                 {
                     RealName = "孟子",
-                    HireDate = DateTime.Parse("2003-03-11")
+                    HrieDate = DateTime.Parse("2003-03-11")
                 },
                 new Instructor
                 {
                     RealName = "朱熹",
-                    HireDate = DateTime.Parse("2003-03-11")
+                    HrieDate = DateTime.Parse("2003-03-11")
                 }
             };
 
-            foreach (var i in instructors)
-                context.Instructors.Add(i);
-            context.SaveChanges();
+                foreach (var i in Instructor)
+                    context.Instructor.Add(i);
+                context.SaveChanges();
 
-            #endregion
+                #endregion
 
-            */
 
-            /*
+                #region 添加部门的种子的数据
 
-            #region 添加部门的种子的数据
-
-            var departments = new[]
-            {
+                var Department = new[]
+                {
                 new Department
                 {
-                    Name = "论语",
+                    name = "论语",
                     Budget = 350000,
-                    StartDate = DateTime.Parse("2017-09-01"),
-                    InstructorId = instructors.Single(i => i.RealName == "孟子").Id
+                    StarDate = DateTime.Parse("2017-09-01"),
+                    InstructorId = Instructor.Single(i => i.RealName == "孟子").Id
                 },
                 new Department
                 {
-                    Name = "兵法",
+                    name = "兵法",
                     Budget = 100000,
-                    StartDate = DateTime.Parse("2017-09-01"),
-                    InstructorId = instructors.Single(i => i.RealName == "鬼谷子").Id
+                    StarDate = DateTime.Parse("2017-09-01"),
+                    InstructorId = Instructor.Single(i => i.RealName == "鬼谷子").Id
                 },
                 new Department
                 {
-                    Name = "文言文",
+                    name = "文言文",
                     Budget = 350000,
-                    StartDate = DateTime.Parse("2017-09-01"),
-                    InstructorId = instructors.Single(i => i.RealName == "朱熹").Id
+                    StarDate = DateTime.Parse("2017-09-01"),
+                    InstructorId = Instructor.Single(i => i.RealName == "朱熹").Id
                 },
                 new Department
                 {
-                    Name = "世界和平",
+                    name = "世界和平",
                     Budget = 100000,
-                    StartDate = DateTime.Parse("2017-09-01"),
-                    InstructorId = instructors.Single(i => i.RealName == "墨子").Id
+                    StarDate = DateTime.Parse("2017-09-01"),
+                    InstructorId = Instructor.Single(i => i.RealName == "墨子").Id
                 }
             };
 
-            foreach (var d in departments)
-                context.Departments.Add(d);
-            context.SaveChanges();
+                foreach (var d in Department)
+                    context.Department.Add(d);
+                context.SaveChanges();
 
-            #endregion
+                #endregion
 
-            */
 
-            var courses = new[]
-            {
+                var courses = new[]
+                {
                 new Course
                 {
                     CourseId = 1050,
                     Title = "数学",
                     Credits = 3,
-                  
+                    DepartmentId = Department.Single(s => s.name == "兵法").Id
                 },
                 new Course
                 {
                     CourseId = 4022,
                     Title = "政治",
                     Credits = 3,
-                   
+                    DepartmentId = Department.Single(s => s.name == "文言文").Id
                 },
                 new Course
                 {
                     CourseId = 4041,
                     Title = "物理",
                     Credits = 3,
-                 
+                    DepartmentId = Department.Single(s => s.name == "兵法").Id
                 },
                 new Course
                 {
                     CourseId = 1045,
                     Title = "化学",
                     Credits = 4,
-                  
+                    DepartmentId = Department.Single(s => s.name == "世界和平").Id
                 },
                 new Course
                 {
                     CourseId = 3141,
                     Title = "生物",
                     Credits = 4,
-                  
+                    DepartmentId = Department.Single(s => s.name == "论语").Id
                 },
                 new Course
                 {
                     CourseId = 2021,
                     Title = "英语",
                     Credits = 3,
-                
+                    DepartmentId = Department.Single(s => s.name == "论语").Id
                 },
                 new Course
                 {
                     CourseId = 2042,
                     Title = "历史",
                     Credits = 4,
-                 
+                    DepartmentId = Department.Single(s => s.name == "文言文").Id
                 }
             };
 
 
-            foreach (var c in courses)
-                context.Courses.Add(c);
-            context.SaveChanges();
+                foreach (var c in courses)
+                    context.Course.Add(c);
+                context.SaveChanges();
 
-            /*
 
-            #region 办公室分配的种子数据
+                #region 办公室分配的种子数据
 
-            var officeAssignments = new[]
-            {
+                var officeAssignments = new[]
+                {
                 new OfficeAssignment
                 {
-                    InstructorId = instructors.Single(i => i.RealName == "孟子").Id,
+                    InstructorId = Instructor.Single(i => i.RealName == "孟子").Id,
                     Location = "逸夫楼 17"
                 },
                 new OfficeAssignment
                 {
-                    InstructorId = instructors.Single(i => i.RealName == "朱熹").Id,
+                    InstructorId = Instructor.Single(i => i.RealName == "朱熹").Id,
                     Location = "青霞路 27"
                 },
                 new OfficeAssignment
                 {
-                    InstructorId = instructors.Single(i => i.RealName == "墨子").Id,
+                    InstructorId = Instructor.Single(i => i.RealName == "墨子").Id,
                     Location = "天府楼 304"
                 }
             };
 
-            foreach (var o in officeAssignments)
-                context.OfficeAssignments.Add(o);
-            context.SaveChanges();
+                foreach (var o in officeAssignments)
+                    context.OfficeAssignment.Add(o);
+                context.SaveChanges();
 
-            #endregion
+                #endregion
 
-            */
+                #region 课程老师的种子数据
 
-            /*
-
-            #region 课程老师的种子数据
-
-            var courseInstructors = new[]
-            {
+                var courseInstructors = new[]
+                {
                 new CourseAssignment
                 {
                     CourseId = courses.Single(c => c.Title == "数学").CourseId,
-                    InstructorId = instructors.Single(i => i.RealName == "鬼谷子").Id
+                    InstructorId = Instructor.Single(i => i.RealName == "鬼谷子").Id
                 },
                 new CourseAssignment
                 {
                     CourseId = courses.Single(c => c.Title == "数学").CourseId,
-                    InstructorId = instructors.Single(i => i.RealName == "墨子").Id
+                    InstructorId = Instructor.Single(i => i.RealName == "墨子").Id
                 },
                 new CourseAssignment
                 {
                     CourseId = courses.Single(c => c.Title == "政治").CourseId,
-                    InstructorId = instructors.Single(i => i.RealName == "朱熹").Id
+                    InstructorId = Instructor.Single(i => i.RealName == "朱熹").Id
                 },
                 new CourseAssignment
                 {
                     CourseId = courses.Single(c => c.Title == "化学").CourseId,
-                    InstructorId = instructors.Single(i => i.RealName == "墨子").Id
+                    InstructorId = Instructor.Single(i => i.RealName == "墨子").Id
                 },
                 new CourseAssignment
                 {
                     CourseId = courses.Single(c => c.Title == "生物").CourseId,
-                    InstructorId = instructors.Single(i => i.RealName == "孟子").Id
+                    InstructorId = Instructor.Single(i => i.RealName == "孟子").Id
                 },
                 new CourseAssignment
                 {
                     CourseId = courses.Single(c => c.Title == "英语").CourseId,
-                    InstructorId = instructors.Single(i => i.RealName == "孟子").Id
+                    InstructorId = Instructor.Single(i => i.RealName == "孟子").Id
                 },
                 new CourseAssignment
                 {
                     CourseId = courses.Single(c => c.Title == "物理").CourseId,
-                    InstructorId = instructors.Single(i => i.RealName == "鬼谷子").Id
+                    InstructorId = Instructor.Single(i => i.RealName == "鬼谷子").Id
                 },
                 new CourseAssignment
                 {
                     CourseId = courses.Single(c => c.Title == "历史").CourseId,
-                    InstructorId = instructors.Single(i => i.RealName == "朱熹").Id
+                    InstructorId = Instructor.Single(i => i.RealName == "朱熹").Id
                 }
-               
+
             };
 
-            foreach (var ci in courseInstructors)
-                context.CourseAssignments.Add(ci);
-            context.SaveChanges();
+                foreach (var ci in courseInstructors)
+                    context.CourseAssignment.Add(ci);
+                context.SaveChanges();
 
-            #endregion
+                #endregion
 
-            */
 
-            var enrollments = new[]
-            {
+                var enrollments = new[]
+                {
                 new Enrollment
                 {
                     StudentId = students.Single(s => s.RealName == "龙傲天").Id,
@@ -356,9 +347,9 @@ namespace MySchool.EntityFramework.Data
                     CourseId = courses.Single(c => c.Title == "英语").CourseId
                 }
             };
-            foreach (var e in enrollments)
-                context.Enrollments.Add(e);
-            context.SaveChanges();
+                foreach (var e in enrollments)
+                    context.Enrollment.Add(e);
+                context.SaveChanges();
+            }
         }
-    }
 }

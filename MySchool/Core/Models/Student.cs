@@ -12,6 +12,7 @@ namespace MySchool.Core.Models
     {
         public int Id { get; set; }
 
+        [Required]
         [StringLength(8, ErrorMessage = "不可以超过8个字符")]
         [DisplayName("学生名称")]
         public string RealName { get; set; }
