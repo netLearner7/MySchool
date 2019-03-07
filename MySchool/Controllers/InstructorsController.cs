@@ -147,7 +147,7 @@ namespace MySchool.Controllers
                 return NotFound();
             }
 
-            var instructor = await _context.Instructor
+            var instructor = await _context.Instructor.AsNoTracking()
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (instructor == null)
             {

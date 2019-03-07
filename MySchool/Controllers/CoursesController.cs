@@ -89,7 +89,7 @@ namespace MySchool.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CourseId,Title,Credits,Grade,DeparmentId")] Course course)
+        public async Task<IActionResult> Edit(int id, [Bind("CourseId,Title,Credits,DepartmentId")] Course course)
         {
             if (id != course.CourseId)
             {
@@ -127,7 +127,7 @@ namespace MySchool.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Course.AsNoTracking()
+            var course = await _context.Course.AsNoTracking().Include(a=>a.Department)
                 .SingleOrDefaultAsync(m => m.CourseId == id);
             if (course == null)
             {
