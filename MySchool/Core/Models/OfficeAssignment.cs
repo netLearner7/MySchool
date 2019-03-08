@@ -17,7 +17,7 @@ namespace MySchool.Core.Models
         public Instructor instructor { get; set; }
 
         [StringLength(50)]
-        [Display(Name ="Office Location")]
+        [Display(Name ="办公地址")]
         public string Location { get; set; }
     }
 }

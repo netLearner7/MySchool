@@ -1,5 +1,5 @@
 ﻿@model MySchool.Core.Models.Instructor
-
+@using MySchool.ViewModels;
 @{
     ViewData["Title"] = "Create";
 }
@@ -22,17 +22,54 @@
                 <input asp-for="HrieDate" class="form-control" />
                 <span asp-validation-for="HrieDate" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <label asp-for="OfficeAssignment.Location" class="control-label"></label>
+                <input asp-for="OfficeAssignment.Location" class="form-control" />
+                <span asp-validation-for="OfficeAssignment.Location" class="text-danger"></span>
             </div>
-        </form>
+
+            <div class="">
+
+                <table class="table">
+                    <tr>
+                        @{
+                            int count = 0;
+                            List<AssignedCourseData> courseDatas = (List<AssignedCourseData>)ViewData["Courses"];
+                            foreach (var item in courseDatas)
+                            {
+                                if (count++ % 3 == 0)
+                                {
+                                <tr></tr>
+                            }
+
+                            <td>
+                                <input type="checkbox" name="select" value="@item.CourseId" @(Html.Raw(item.Assigned ? "checked='checked'" : "")) />
+                                <label>@item.CourseId  @item.Title</label>
+                            </td>
+                        }
+
+                        }
+                        <td></td>
+                    </tr>
+                </table>
+
+                </div>
+
+
+
+
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
