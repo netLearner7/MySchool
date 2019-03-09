@@ -64,6 +64,10 @@ namespace MySchool.Migrations
 
                     b.Property<int?>("InstructorId");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
+
                     b.Property<DateTime>("StarDate");
 
                     b.Property<string>("name")
@@ -144,7 +148,7 @@ namespace MySchool.Migrations
             modelBuilder.Entity("MySchool.Core.Models.Course", b =>
                 {
                     b.HasOne("MySchool.Core.Models.Department", "Department")
-                        .WithMany("courses")
+                        .WithMany("Courses")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

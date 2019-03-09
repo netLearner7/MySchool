@@ -12,8 +12,8 @@ using System;
 namespace MySchool.Migrations
 {
     [DbContext(typeof(MySchoolDbContext))]
-    [Migration("20190307054032_school")]
-    partial class school
+    [Migration("20190309013317_zyz")]
+    partial class zyz
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -64,6 +64,10 @@ namespace MySchool.Migrations
                         .HasColumnType("Money");
 
                     b.Property<int?>("InstructorId");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.Property<DateTime>("StarDate");
 
@@ -145,7 +149,7 @@ namespace MySchool.Migrations
             modelBuilder.Entity("MySchool.Core.Models.Course", b =>
                 {
                     b.HasOne("MySchool.Core.Models.Department", "Department")
-                        .WithMany("courses")
+                        .WithMany("Courses")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
