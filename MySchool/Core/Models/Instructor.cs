@@ -9,13 +9,8 @@ namespace MySchool.Core.Models
     /// <summary>
     /// 教师表
     /// </summary>
-    public class Instructor
+    public class Instructor:people
     {
-        public int Id { get; set; }
-
-        [Display(Name = "教师姓名")]
-        public string RealName { get; set; }
-
         //工龄
         [Display(Name ="入职时间")]
         [DataType(DataType.Date)]

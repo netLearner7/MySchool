@@ -8,15 +8,8 @@ using System.Threading.Tasks;
 namespace MySchool.Core.Models
 {
     //学生表
-    public class Student
+    public class Student:people
     {
-        public int Id { get; set; }
-
-        [Required]
-        [StringLength(8, ErrorMessage = "不可以超过8个字符")]
-        [DisplayName("学生名称")]
-        public string RealName { get; set; }
-
         [DisplayName("入学时间")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]

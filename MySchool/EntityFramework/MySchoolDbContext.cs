@@ -25,6 +25,8 @@ namespace MySchool.EntityFramework
 
         public DbSet<OfficeAssignment> OfficeAssignment { get; set; }
 
+        public DbSet<people> people { get; set; }
+
         public DbSet<Student> Students { get; set; }
 
 
@@ -42,6 +44,8 @@ namespace MySchool.EntityFramework
             modelBuilder.Entity<Instructor>().ToTable("Instructor");
 
             modelBuilder.Entity<OfficeAssignment>().ToTable("OfficeAssignment").HasKey(c=>c.InstructorId);
+
+            modelBuilder.Entity<people>().ToTable("people");
                 
 
             modelBuilder.Entity<Enrollment>().ToTable("Enrollment").HasOne(d => d.Course).WithMany(d => d.Enrollments);

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 using MySchool.Application.enumsType;
 using MySchool.EntityFramework;
 using System;
@@ -100,20 +101,6 @@ namespace MySchool.Migrations
                     b.ToTable("Enrollment");
                 });
 
-            modelBuilder.Entity("MySchool.Core.Models.Instructor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("HrieDate");
-
-                    b.Property<string>("RealName");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Instructor");
-                });
-
             modelBuilder.Entity("MySchool.Core.Models.OfficeAssignment", b =>
                 {
                     b.Property<int>("InstructorId");
@@ -126,23 +113,48 @@ namespace MySchool.Migrations
                     b.ToTable("OfficeAssignment");
                 });
 
-            modelBuilder.Entity("MySchool.Core.Models.Student", b =>
+            modelBuilder.Entity("MySchool.Core.Models.people", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("EnrollmentDate");
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
 
                     b.Property<string>("RealName")
                         .IsRequired()
                         .HasMaxLength(8);
 
+                    b.HasKey("Id");
+
+                    b.ToTable("people");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("people");
+                });
+
+            modelBuilder.Entity("MySchool.Core.Models.Instructor", b =>
+                {
+                    b.HasBaseType("MySchool.Core.Models.people");
+
+                    b.Property<DateTime>("HrieDate");
+
+                    b.ToTable("Instructor");
+
+                    b.HasDiscriminator().HasValue("Instructor");
+                });
+
+            modelBuilder.Entity("MySchool.Core.Models.Student", b =>
+                {
+                    b.HasBaseType("MySchool.Core.Models.people");
+
+                    b.Property<DateTime>("EnrollmentDate");
+
                     b.Property<string>("secret")
                         .HasMaxLength(200);
 
-                    b.HasKey("Id");
-
                     b.ToTable("Student");
+
+                    b.HasDiscriminator().HasValue("Student");
                 });
 
             modelBuilder.Entity("MySchool.Core.Models.Course", b =>
