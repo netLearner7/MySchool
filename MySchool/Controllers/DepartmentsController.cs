@@ -34,9 +34,11 @@ namespace MySchool.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Department
+            string sql = "select * from Department where Id={0}";
+
+            var department = await _context.Department.FromSql(sql,id)
                 .Include(d => d.Administrator)
-                .SingleOrDefaultAsync(m => m.Id == id);
+                .SingleOrDefaultAsync();
             if (department == null)
             {
                 return NotFound();

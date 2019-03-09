@@ -6,6 +6,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
+using System.Data.Common;
 
 namespace MySchool.Controllers
 {
@@ -23,20 +25,53 @@ namespace MySchool.Controllers
             return View();
         }
 
+
+        //ef使用原生sql贼麻烦
         public async Task<IActionResult> About()
         {
             ViewData["Message"] = "学生统计信息";
 
-            var dots = from entity in _dbContext.Students
-                       group entity by entity.EnrollmentDate into dateGroup
-                       select new EnrollmentDateGroup()
-                       {
-                           StudentCount = dateGroup.Count(),
-                           EnrollmentDate = dateGroup.Key
-                       };
-            var dtos = await dots.ToListAsync();
-            
-            return View(dtos);
+
+            var groups = new List<EnrollmentDateGroup>();
+
+
+            var conn = _dbContext.Database.GetDbConnection();
+
+
+            try
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    string sqlQuery = @"select  EnrollmentDate,  COUNT(*) as StudentCount     from people where Discriminator='Student' group by EnrollmentDate";
+
+                    command.CommandText = sqlQuery;
+
+                    DbDataReader reader = await command.ExecuteReaderAsync();
+
+                    if (reader.HasRows)
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var row = new EnrollmentDateGroup()
+                            {
+                                EnrollmentDate = reader.GetDateTime(0),
+                                StudentCount = reader.GetInt32(1)
+                            };
+                            groups.Add(row);
+
+                        }
+                    }
+                    reader.Dispose();
+                }
+
+            }
+            finally
+            {
+                conn.Close();
+            }
+            return View(groups);
         }
 
         public IActionResult Contact()
